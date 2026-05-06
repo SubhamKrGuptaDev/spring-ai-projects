@@ -1,6 +1,10 @@
 package com.spring.ai.example.service;
 
+import com.spring.ai.example.entity.ApplyLeaveRequest;
 import com.spring.ai.example.entity.LeaveRecord;
+import com.spring.ai.example.entity.LeaveType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,14 +13,15 @@ import java.util.List;
 @Service
 public class LeaveService {
 
+    private static final Logger log = LoggerFactory.getLogger(LeaveService.class);
     private List<LeaveRecord> leaveRecords = new ArrayList<>();
     private Long id=3L;
     private final LeaveTypeService leaveTypeService;
 
     public LeaveService(LeaveTypeService leaveTypeService) {
         this.leaveTypeService = leaveTypeService;
-        leaveRecords.add(new LeaveRecord(1L,"2025-12-12","2025-12-14", leaveTypeService.getLeaveTypeById(1L)));
-        leaveRecords.add(new LeaveRecord(1L,"2025-12-20","2025-12-22", leaveTypeService.getLeaveTypeById(2L)));
+        leaveRecords.add(new LeaveRecord(1L,101L,"2025-12-12","2025-12-14", leaveTypeService.getLeaveTypeById(1L)));
+        leaveRecords.add(new LeaveRecord(2L,102L,"2025-12-20","2025-12-22", leaveTypeService.getLeaveTypeById(2L)));
     }
 
     public List<LeaveRecord> getAll() {
@@ -32,8 +37,21 @@ public class LeaveService {
     public LeaveRecord createLeave(LeaveRecord leaveRecord) {
         leaveRecord.setId(id++);
         this.leaveRecords.add(leaveRecord);
+        log.info("Leave created: {}", leaveRecord);
         return leaveRecord;
     }
 
+    public void applyLeave(ApplyLeaveRequest applyLeaveRequest) {
+
+        LeaveType leaveTypeByName = leaveTypeService.getLeaveTypeByName(applyLeaveRequest.leaveTypeName());
+        log.info("Found Leave Type: {}", leaveTypeByName);
+        LeaveRecord leaveRecord = new LeaveRecord(applyLeaveRequest.accountNo(),
+                applyLeaveRequest.startDate(),
+                applyLeaveRequest.endDate(),
+                leaveTypeByName);
+
+        createLeave(leaveRecord);
+        log.info("Leave applied: {}", leaveRecord);
+    }
 
 }

@@ -35,5 +35,12 @@ public class LeaveTypeService {
     }
 
 
+    public LeaveType getLeaveTypeByName(String name) {
+        return leaveTypes.stream()
+                .filter(leaveType -> leaveType.getLeaveName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
+    }
+
 
 }

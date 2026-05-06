@@ -16,6 +16,7 @@ public class ChatClientConfig {
         return builder
 //                .defaultAdvisors(new SimpleLoggerAdvisor())
                 .defaultAdvisors(List.of(new TokenUsageAuditOpenAiAdvisor()))
+                .defaultToolNames("applyLeave", "getShiftDetails")
                 .defaultSystem("""
                          You are an internal HR Assistant. Your role is to help
                          employee with questions related to HR policies, such as leave policy,
